@@ -28,15 +28,34 @@ async function run() {
       await client.connect();
       const database = client.db("Tutor");
       const studentTuitionCollection = database.collection("Student");
-      // create a document to insert
-      const doc = {
-        title: "Record of a Shriveled Datum",
-        content: "No bytes, no problem. Just insert a document, in MongoDB",
-      }
-      const result = await studentTuitionCollection.insertOne(doc);
-      console.log(`A document was inserted with the _id: ${result.insertedId}`);
+     
+
+        app.post('/student', async(req,res) =>{
+            const student = req.body;
+            const result = await studentTuitionCollection.insertOne(student)
+            console.log(req.body)
+            console.log(result);
+            res.json(result)
+        })
+
+        app.get('/student', async(req,res) =>{
+            const cursor = studentTuitionCollection.find({})
+            const result = await cursor.toArray()
+            res.send(result);
+        })
+
+
+
+
+
+
+
+
+
+
+
     } finally {
-      await client.close();
+    //   await client.close();
     }
   }
   run().catch(console.dir);
