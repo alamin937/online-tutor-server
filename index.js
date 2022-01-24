@@ -119,6 +119,13 @@ async function run() {
             res.send(result);
         })
 
+        app.delete('/teacher/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await teacherCollection.deleteOne(query)
+            res.send(result);
+        })
+
 
 
 
