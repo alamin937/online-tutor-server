@@ -2,6 +2,7 @@ const express = require('express')
 var MongoClient = require('mongodb').MongoClient;
 const cors = require('cors')
 require('dotenv').config()
+const ObjectId = require('mongodb').ObjectId
 const fileUpload = require('express-fileupload')
 
 const app = express()
@@ -31,6 +32,7 @@ async function run() {
       const database = client.db("Tutor");
       const studentTuitionCollection = database.collection("Student");
       const teacherCollection = database.collection("teacher");
+      const bookingCollection = database.collection("book");
      
 
         app.post('/student', async(req,res) =>{
@@ -81,7 +83,41 @@ async function run() {
         })
 
 
+        app.get('/teacher/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await teacherCollection.findOne(query)
+            res.send(result)
+        })
 
+
+        app.post('/book', async(req,res) =>{
+            const book = req.body;
+            const result = await bookingCollection.insertOne(book)
+            res.send(result);
+        })
+
+
+        app.get('/book', async(req,res) =>{
+            const cursor = bookingCollection.find({})
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get('/book/:email', async(req,res) =>{
+            const email = req.params.email;
+            const query = {email: email}
+            const cursor = bookingCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result);
+        })
+
+        app.delete('/book/:id', async(req,res) =>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)}
+            const result = await bookingCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
 
