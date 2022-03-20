@@ -33,6 +33,7 @@ async function run() {
       const studentTuitionCollection = database.collection("Student");
       const teacherCollection = database.collection("teacher");
       const bookingCollection = database.collection("book");
+      const userCollection = database.collection('User')
      
 
         app.post('/student', async(req,res) =>{
@@ -127,8 +128,37 @@ async function run() {
         })
 
 
+        // user Collection
+            app.post('/users', async (req,res) =>{
+                const user = req.body
+                const result = await userCollection.insertOne(user)
+                console.log(result)
+                res.send(result)
+            })
 
+            // update user
+            app.put('/users/admin', async(req,res) =>{
+                const user = req.body
+                const filter = {email: user.email}
+                const updateDoc = {$set: {role:'admin'}}
+                const result = await userCollection.updateOne(filter, updateDoc)
+                console.log(result)
+                res.send(result);
+            })
 
+            // get user
+            app.get('/users/:email', async (req,res)  =>{
+
+                const email = req.params.email
+                const query = {email: email}
+                const user = await userCollection.findOne(query)
+                let isAdmin = (false)
+                if(user?.role === 'admin'){
+                    isAdmin = true
+                }
+                res.json({admin: isAdmin});
+
+            })
 
 
 
